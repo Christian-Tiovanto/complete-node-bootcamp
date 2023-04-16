@@ -1,5 +1,6 @@
 const EventEmitter = require("events");
 const http = require("http");
+const url = require(`url`);
 class Sales extends EventEmitter {
   constructor() {
     super();
@@ -22,6 +23,7 @@ myEmitter.emit("newsale", 9);
 const server = http.createServer();
 
 server.on("request", (req, res) => {
+  console.log(req.url);
   console.log(`request received`);
   res.end("request received");
 });
@@ -30,7 +32,7 @@ server.on("request", (req, res) => {
   console.log(`another request`);
 });
 
-server.on("end", (req, res) => {
+server.on("close", (req, res) => {
   console.log(`end`);
 });
 server.listen(8000, "127.0.0.1", () => {
