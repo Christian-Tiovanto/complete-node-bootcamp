@@ -14,7 +14,7 @@ const tourSchema = new mongoose.Schema({
   images: {
     type: [String],
   },
-  startDates: [String],
+  startDates: [Date],
   name: {
     type: String,
     required: [true, 'a tour must have a name'],
@@ -39,7 +39,7 @@ const tourSchema = new mongoose.Schema({
     },
     required: [true, 'a tour must have a difficulty'],
   },
-  guides: mongoose.ObjectId,
+  guides: [mongoose.ObjectId],
   price: {
     type: Number,
     required: [true, 'A tour must have a price'],
