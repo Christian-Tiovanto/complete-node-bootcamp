@@ -1,7 +1,4 @@
-const date1 = new Date('2020-01-01');
-const date2 = new Date('2019-01-01');
-console.log(date1);
-
-if (date2 > date1) {
-  console.log('mang ea');
-}
+const date = new Date('2023-11-18T18:01:48.927+00:00');
+console.log(date.toString());
+regex = /([^A-Za-z])/g;
+console.log(regex.test('sophi '));
