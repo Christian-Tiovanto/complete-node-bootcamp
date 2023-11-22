@@ -9,7 +9,7 @@ const ReviewSchema = new mongoose.Schema({
     type: Number,
     min: [1, 'rating must be above 1.0'],
     max: [5, 'rating must be below 5.0'],
-    require: [true, 'ratings cant be null'],
+    required: [true, 'ratings cant be null'],
   },
   createdAt: {
     type: Date,
@@ -26,6 +26,8 @@ const ReviewSchema = new mongoose.Schema({
     required: [true, 'review must be belong to a tour'],
   },
 });
+
+ReviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 const review = mongoose.model('Review', ReviewSchema);
 module.exports = review;

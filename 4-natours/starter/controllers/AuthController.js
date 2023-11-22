@@ -5,20 +5,41 @@ const jwt = require('jsonwebtoken');
 const util = require('util');
 const sendMail = require('../utils/email');
 
-exports.createUser = catchAsync(async (req, res, next) => {
-  const user = await User.create(req.body);
+const signToken = async (id) => {
   const token = await util.promisify(jwt.sign)(
-    { id: user._id },
+    { id },
     process.env.JWT_SECRET_KEY,
     { expiresIn: process.env.JWT_EXPIRES }
   );
+  return token;
+};
+
+const sendToken = async (statusCode, user, res) => {
+  const token = await signToken(user._id);
+  const cookieOption = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') {
+    cookieOption.secure = true;
+  }
+  res.cookie('jwt', token, cookieOption);
   user.password = undefined;
-  user.passwordConfirm = undefined;
-  res.status(201).cookie('jwt', token).json({
+  res.status(statusCode).json({
     status: 'success',
-    data: user,
+    user: user,
     token,
   });
+};
+
+exports.createUser = catchAsync(async (req, res, next) => {
+  const user = await User.create(req.body);
+  const token = await signToken(user._id);
+  user.password = undefined;
+  user.passwordConfirm = undefined;
+  sendToken(201, user, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -31,18 +52,8 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!(await user.isCorrectPassword(req.body.password, user.password)))
     return next(new AppError('Wrong email or password', 400));
   req.user = user;
-  console.log('coba');
-  const token = await util.promisify(jwt.sign)(
-    { id: user._id },
-    process.env.JWT_SECRET_KEY,
-    { expiresIn: process.env.JWT_EXPIRES }
-  );
-  console.log(token);
-  res.status(200).cookie('jwt', token).json({
-    status: 'Success',
-    message: 'succesfully logged in',
-    token,
-  });
+
+  sendToken();
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -138,7 +149,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.restrictRolesTo = (roles) => {
   return catchAsync(async (req, res, next) => {
-    console.log(roles);
     if (!roles.includes(req.user.role)) {
       return next(new AppError('You are restricted to do that', 401));
     }

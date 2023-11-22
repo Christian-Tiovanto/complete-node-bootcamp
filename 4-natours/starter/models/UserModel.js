@@ -38,18 +38,18 @@ const userSchema = new mongoose.Schema({
     minlength: [8, 'password must be at least 8 character'],
     select: false,
   },
-  // passwordConfirm: {
-  //   type: String,
-  //   required: [true, 'please confirm your password'],
-  //   validate: {
-  //     validator: function (val) {
-  //       console.log('tessssss ');
-  //       return val == this.password;
-  //     },
-  //     message: 'password is not the same',
-  //   },
-  //   select: false,
-  // },
+  passwordConfirm: {
+    type: String,
+    required: [true, 'please confirm your password'],
+    validate: {
+      validator: function (val) {
+        console.log('tessssss ');
+        return val == this.password;
+      },
+      message: 'password is not the same',
+    },
+    select: false,
+  },
   resetPasswordToken: {
     type: String,
   },
