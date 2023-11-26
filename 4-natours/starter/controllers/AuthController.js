@@ -34,7 +34,7 @@ const sendToken = async (statusCode, user, res) => {
   });
 };
 
-exports.createUser = catchAsync(async (req, res, next) => {
+exports.signup = catchAsync(async (req, res, next) => {
   const user = await User.create(req.body);
   const token = await signToken(user._id);
   user.password = undefined;
@@ -53,7 +53,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Wrong email or password', 400));
   req.user = user;
 
-  sendToken();
+  sendToken(200, user, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

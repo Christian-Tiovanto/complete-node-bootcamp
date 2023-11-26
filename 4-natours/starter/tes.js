@@ -1,4 +1,18 @@
-const date = new Date('2023-11-18T18:01:48.927+00:00');
-console.log(date.toString());
-regex = /([^A-Za-z])/g;
-console.log(regex.test('sophi '));
+class Tes {
+  constructor(coba) {
+    this.coba = coba;
+  }
+
+  nyobak() {
+    this.coba = 'ea';
+    return this;
+  }
+
+  ciba() {
+    this.coba = 'coba';
+    return this;
+  }
+}
+
+const coba = new Tes('masa si');
+console.log(coba.nyobak().ciba().nyobak().coba);

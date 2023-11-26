@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-
+const Tour = require('./../models/TourModel');
+const AppError = require('./../utils/appError');
 const ReviewSchema = new mongoose.Schema({
   review: {
     type: String,
@@ -17,7 +18,7 @@ const ReviewSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User', //
     required: [true, 'review must be belong to a user'],
   },
   tour: {
@@ -29,5 +30,11 @@ const ReviewSchema = new mongoose.Schema({
 
 ReviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
+ReviewSchema.pre('save', async function (next) {
+  const doc = await Tour.findById(this.tour);
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404));
+  }
+});
 const review = mongoose.model('Review', ReviewSchema);
 module.exports = review;

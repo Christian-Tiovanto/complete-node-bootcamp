@@ -58,7 +58,13 @@ const tourSchema = new mongoose.Schema({
     required: [true, 'a tour must have a cover image'],
   },
 });
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour',
+});
 
+tourSchema.index({ tour: 1 }, { unique: true });
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

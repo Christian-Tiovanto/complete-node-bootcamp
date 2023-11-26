@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/AuthController');
-router.route('/').post(AuthController.createUser);
+router.route('/').post(AuthController.signup);
 router
   .route('/updatePassword')
   .post(AuthController.protect, AuthController.updatePassword);

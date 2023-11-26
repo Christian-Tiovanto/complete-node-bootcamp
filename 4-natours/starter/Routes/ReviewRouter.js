@@ -4,11 +4,12 @@ const AuthController = require('./../controllers/AuthController');
 const ReviewController = require('./../controllers/ReviewController');
 
 Router.route('/').get(ReviewController.getAllReview);
-Router.route('/:tourid')
-  .get(AuthController.protect, ReviewController.getReview)
+
+Router.route('/:id')
   .post(
     AuthController.protect,
     AuthController.restrictRolesTo(['user']),
+    ReviewController.setTourUserIds,
     ReviewController.postReview
   )
   .patch(
@@ -20,11 +21,7 @@ Router.route('/:tourid')
     AuthController.protect,
     AuthController.restrictRolesTo(['user']),
     ReviewController.deleteReview
-  );
-
-Router.route('/MyReview').get(
-  AuthController.protect,
-  ReviewController.myReview
-);
+  )
+  .get(ReviewController.getReview);
 
 module.exports = Router;

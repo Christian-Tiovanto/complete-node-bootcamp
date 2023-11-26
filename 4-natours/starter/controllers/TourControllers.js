@@ -1,7 +1,7 @@
 const Tour = require('./../models/TourModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-
+const APIFeatures = require('./../utils/apiFeatures');
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
   if (!tour) return next(new AppError('There is no tour with that id', 404));
@@ -12,36 +12,12 @@ exports.getTour = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllTour = catchAsync(async (req, res, next) => {
-  const excludedQuery = ['page', 'limit', 'sort', 'fields'];
+  const tours = await new APIFeatures(Tour.find(), req.query)
+    .filter()
+    .sorting()
+    .fields()
+    .pagination().query;
 
-  // Filtering
-  let queryStr = { ...req.query };
-  excludedQuery.forEach((el) => delete queryStr[el]);
-  const regex = /(gt|gte|lt|lte)/gi;
-  queryStr = JSON.stringify(queryStr);
-  queryStr = queryStr.replace(regex, (match) => `$${match}`);
-  let tours = Tour.find(JSON.parse(queryStr));
-
-  // Sorting
-  if (req.query.sort) {
-    tours.sort(req.query.sort.replace(',', ' '));
-  } else {
-    tours.sort('-createdAt');
-  }
-
-  // select Fields
-  if (req.query.fields) {
-    tours.select(req.query.fields.replace(',', ' '));
-  } else {
-    tours.select('-__v');
-  }
-
-  // Pagination
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
-  tours.skip(skip).limit(limit);
-  tours = await tours.find();
   if (!tours) return next(new AppError('There is no tour available', 404));
   res.status(200).json({
     status: 'success',
