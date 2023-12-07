@@ -1,7 +1,7 @@
 const express = require('express');
 const Router = express.Router();
-const AuthController = require('./../controllers/AuthController');
-const ReviewController = require('./../controllers/ReviewController');
+const AuthController = require('../controllers/AuthController');
+const ReviewController = require('../controllers/ReviewController');
 
 Router.route('/').get(ReviewController.getAllReview);
 

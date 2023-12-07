@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const slugify = require('slugify');
 const tourSchema = new mongoose.Schema({
   ratingsAverage: {
     type: Number,
@@ -39,7 +39,6 @@ const tourSchema = new mongoose.Schema({
     },
     required: [true, 'a tour must have a difficulty'],
   },
-  guides: [mongoose.ObjectId],
   price: {
     type: Number,
     required: [true, 'A tour must have a price'],
@@ -57,6 +56,30 @@ const tourSchema = new mongoose.Schema({
     type: String,
     required: [true, 'a tour must have a cover image'],
   },
+  startLocation: {
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+  },
+  locations: [
+    {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+  ],
+  guides: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  slug: String,
 });
 tourSchema.virtual('reviews', {
   ref: 'Review',
@@ -64,6 +87,10 @@ tourSchema.virtual('reviews', {
   foreignField: 'tour',
 });
 
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
 tourSchema.index({ tour: 1 }, { unique: true });
 const Tour = mongoose.model('Tour', tourSchema);
 

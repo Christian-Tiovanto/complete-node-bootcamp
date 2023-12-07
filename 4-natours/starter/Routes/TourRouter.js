@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const tourController = require('./../controllers/TourControllers');
-const authController = require('./../controllers/AuthController');
+const tourController = require('../controllers/TourControllers');
+const authController = require('../controllers/AuthController');
 
 router.route('/getTourStats').get(tourController.getTourStats);
 router.route('/getMonthlyPlan/:year').get(tourController.getMonthlyPlan);

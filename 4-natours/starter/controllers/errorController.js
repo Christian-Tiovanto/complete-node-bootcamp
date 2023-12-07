@@ -30,16 +30,27 @@ const handleJWTError = (err, req, res) => {
   return new AppError('invalid token,please log in again', 401);
 };
 const sendErrorProd = (err, req, res) => {
-  if (err.isOperational) {
-    return res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
+  if (req.originalUrl.startsWith('/api')) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+    console.error('ERROR', err);
+    console.log('ngetes');
+    res.status(500).json({
+      status: 'error',
+      message: 'something went very wrong',
     });
   }
-  res.status(500).json({
-    status: 'failed',
-    err,
-  });
+  if (err.isOperational) {
+    console.error(err);
+    return res.status(err.statusCode).render('error', { msg: err.message });
+  }
+  console.error(err);
+  return res.status(500).render('error', { msg: 'please try again later' });
+  c;
 };
 const sendErrorDev = (err, req, res) => {
   console.log(err);
@@ -51,18 +62,17 @@ const sendErrorDev = (err, req, res) => {
   });
 };
 
-exports.globalErrorHandler = (err, req, res, next) => {
+module.exports = globalErrorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'Error';
   if (process.env.NODE_ENV == 'production') {
     let error = { ...err };
-    console.log(err.name);
-    if (err.code === 11000) error = handleDuplicateDev(err);
+    if (err.code === 11000) err = handleDuplicateDev(err);
     if (err.name == 'ValidationError')
       error = handleValidationError(err, req, res);
-    if (err.name == 'CastError') error = handleCastError(err);
-    if (err.name == 'JsonWebTokenError') error = handleJWTError(err);
-    sendErrorProd(error, req, res);
+    if (err.name == 'CastError') err = handleCastError(err);
+    if (err.name == 'JsonWebTokenError') err = handleJWTError(err);
+    sendErrorProd(err, req, res);
   } else if (process.env.NODE_ENV == 'development') {
     sendErrorDev(err, req, res);
   }

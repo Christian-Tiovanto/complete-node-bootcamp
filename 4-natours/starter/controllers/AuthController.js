@@ -29,15 +29,18 @@ const sendToken = async (statusCode, user, res) => {
   user.password = undefined;
   res.status(statusCode).json({
     status: 'success',
-    user: user,
+    user,
     token,
   });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const user = await User.create(req.body);
-  const token = await signToken(user._id);
-  user.password = undefined;
+  const user = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  });
   user.passwordConfirm = undefined;
   sendToken(201, user, res);
 });
@@ -48,12 +51,31 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email }).select(
     '+password'
   );
+  console.log('tes'); 
   if (!user) return next(new AppError('Wrong email or pasword', 400));
   if (!(await user.isCorrectPassword(req.body.password, user.password)))
     return next(new AppError('Wrong email or password', 400));
   req.user = user;
 
   sendToken(200, user, res);
+});
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  let token;
+  console.log(req.cookies);
+  if (req.cookies) {
+    token = req.cookies.jwt;
+  }
+  if (!token) return next();
+  const decoded = await util.promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET_KEY
+  );
+  const user = await User.findById(decoded.id);
+  if (!user) return next();
+  req.user = user;
+
+  next();
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -71,7 +93,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     token,
     process.env.JWT_SECRET_KEY
   );
+  console.log(decoded);
   const user = await User.findById(decoded.id);
+  console.log(user);
   if (!user)
     return next(
       new AppError('The user belonging to this token no longer exist ', 401)

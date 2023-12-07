@@ -1,18 +1,17 @@
-class Tes {
-  constructor(coba) {
-    this.coba = coba;
-  }
+const path = require('path');
+const plugin = require('@parcel/plugin');
 
-  nyobak() {
-    this.coba = 'ea';
-    return this;
-  }
+const namer = new plugin.Namer({
+  name({ bundle }) {
+    const origName = path.basename(bundle.getMainEntry().filePath);
 
-  ciba() {
-    this.coba = 'coba';
-    return this;
-  }
-}
+    if (['files', 'to', 'rename'].includes(origName)) {
+      return 'bundle';
+    }
 
-const coba = new Tes('masa si');
-console.log(coba.nyobak().ciba().nyobak().coba);
+    // Continue to next Namer
+    return null;
+  },
+});
+
+module.exports = namer;

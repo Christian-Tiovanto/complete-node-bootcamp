@@ -1,27 +1,43 @@
+//# sourceMappingURL=app.js.map
+const path = require('path');
 const express = require('express');
-const tourRouter = require('./Routes/TourRouter');
-const userRouter = require('./Routes/UserRouter');
-const reviewRouter = require('./Routes/ReviewRouter');
-const app = express();
-const catchAsync = require('./utils/catchAsync');
-const AppError = require('./utils/appError');
 const cookieParser = require('cookie-parser');
-const errorController = require('./controllers/errorController');
-app.use(express.json());
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
+
+const tourRouter = require('./Routes/tourRouter');
+const userRouter = require('./Routes/userRouter');
+const reviewRouter = require('./Routes/reviewRouter');
+const viewRouter = require('./Routes/viewRouter');
+const bookRouter = require('./Routes/bookingRouter');
+const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// 1) GLOBAL MIDDLEWARES
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
-app.use('/', (req, res, next) => {
+
+app.use((req, res, next) => {
+  console.log('tes');
   next();
 });
-
+// 3) ROUTES
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookRouter);
 
-app.use(errorController.globalErrorHandler);
-app.use('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'failed',
-    message: 'there is no api for that url',
-  });
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+app.use(globalErrorHandler);
+
 module.exports = app;

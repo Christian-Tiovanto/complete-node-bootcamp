@@ -12,10 +12,10 @@ const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
 
 console.log(tours.length);
 if (process.argv[2] == 'import') {
-  // for (const tour of tours) {
-  //   Tour.create(tour);
-  // }
-  for (const user of users) {
-    User.create(user);
+  for (const tour of tours) {
+    Tour.create(tour);
   }
+  // for (const user of users) {
+  //   User.create(user);
+  // }
 }
