@@ -4,6 +4,9 @@ const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const util = require('util');
 const sendMail = require('../utils/email');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const signToken = async (id) => {
   const token = await util.promisify(jwt.sign)(
@@ -51,7 +54,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email }).select(
     '+password'
   );
-  console.log('tes'); 
+  console.log('tes');
   if (!user) return next(new AppError('Wrong email or pasword', 400));
   if (!(await user.isCorrectPassword(req.body.password, user.password)))
     return next(new AppError('Wrong email or password', 400));
@@ -60,6 +63,13 @@ exports.login = catchAsync(async (req, res, next) => {
   sendToken(200, user, res);
 });
 
+exports.logOut = catchAsync(async (req, res, next) => {
+  res.clearCookie('jwt');
+  console.log('tes');
+  res.status(200).json({
+    status: 'success',
+  });
+});
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
   let token;
   console.log(req.cookies);
@@ -106,6 +116,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
+  console.log('mang bolehhh');
+  console.log(req.body);
   const user = await User.findById(req.user._id).select('+password');
   if (!req.body.password || !req.body.passwordConfirm)
     return next(
@@ -113,8 +125,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     );
   if (!(await user.isCorrectPassword(req.body.currentPassword, user.password)))
     return next(new AppError('incorrect password'), 401);
-  // user.password = req.body.password;
-  // user.passwordConfirm = req.body.passwordConfirm;
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   const token = await util.promisify(jwt.sign)(
     { data: user._id },

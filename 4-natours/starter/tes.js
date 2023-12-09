@@ -1,17 +1,18 @@
-const path = require('path');
-const plugin = require('@parcel/plugin');
+const tes = async () => {
+  console.log('ea');
+  const result1 = await new Promise((resolve) => {
+    resolve(1);
+  });
+  console.log('babik');
+  const result2 = await new Promise((resolve) =>
+    setTimeout(() => resolve('2'))
+  );
+  console.log(result1);
+};
 
-const namer = new plugin.Namer({
-  name({ bundle }) {
-    const origName = path.basename(bundle.getMainEntry().filePath);
+const coba = async () => {
+  await tes();
+  console.log('adfadf');
+};
 
-    if (['files', 'to', 'rename'].includes(origName)) {
-      return 'bundle';
-    }
-
-    // Continue to next Namer
-    return null;
-  },
-});
-
-module.exports = namer;
+coba();

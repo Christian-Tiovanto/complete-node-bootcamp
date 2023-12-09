@@ -2,11 +2,24 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const User = require('./../models/UserModel');
 const factory = require('./handlerFactory');
-const multer = require('./')
+const multer = require('multer');
+const sharp = require('sharp');
+
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize({ width: 500, height: 500 })
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+  req.user.photo = req.file.filename;
+  next();
+});
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   req.user.name = req.body.name;
   req.user.email = req.body.email;
-  
   await req.user.save();
   res.status(200).json({
     status: 'success',
