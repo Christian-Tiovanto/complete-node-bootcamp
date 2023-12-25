@@ -5,7 +5,7 @@ const ReviewController = require('../controllers/ReviewController');
 
 Router.route('/').get(ReviewController.getAllReview);
 
-Router.route('/:id')
+Router.route('/:tourID')
   .post(
     AuthController.protect,
     AuthController.restrictRolesTo(['user']),

@@ -4,11 +4,13 @@ const User = require('./../models/UserModel');
 const factory = require('./handlerFactory');
 const multer = require('multer');
 const sharp = require('sharp');
+const fs = require('fs');
+const writableStream = fs.createWriteStream('output.txt');
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-
+  writableStream.write(req.file.buffer);
   await sharp(req.file.buffer)
     .resize({ width: 500, height: 500 })
     .jpeg({ quality: 90 })

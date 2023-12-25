@@ -23,3 +23,7 @@ exports.tour = catchAsync(async (req, res, next) => {
 exports.getAccount = catchAsync(async (req, res, next) => {
   res.render('account', { user: req.user });
 });
+exports.manageTour = catchAsync(async (req, res, next) => {
+  const tours = await Tour.find();
+  res.render('overview', { tours, user: req.user });
+});

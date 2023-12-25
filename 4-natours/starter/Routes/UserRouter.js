@@ -6,6 +6,10 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+router.use('/', (req, res, next) => {
+  console.log(req.originalUrl);
+  next();
+});
 router.route('/').post(AuthController.signup);
 router
   .route('/updatePassword')

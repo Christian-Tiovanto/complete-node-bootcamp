@@ -54,7 +54,6 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email }).select(
     '+password'
   );
-  console.log('tes');
   if (!user) return next(new AppError('Wrong email or pasword', 400));
   if (!(await user.isCorrectPassword(req.body.password, user.password)))
     return next(new AppError('Wrong email or password', 400));
@@ -68,6 +67,7 @@ exports.logOut = catchAsync(async (req, res, next) => {
   console.log('tes');
   res.status(200).json({
     status: 'success',
+    jwt: null,
   });
 });
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
@@ -161,6 +161,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   } catch (err) {
     user.resetPasswordToken = undefined;
     user.expiredPasswordToken = undefined;
+    console.log(err);
     return next(new AppError('there is a problem sending the email', 400));
   }
 });
