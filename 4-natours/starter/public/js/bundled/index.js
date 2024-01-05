@@ -580,6 +580,7 @@ var _alerts = require("./alerts");
 var _loginMjs = require("./login.mjs");
 var _stripe = require("./stripe");
 var _updateSettings = require("./updateSettings.");
+var _map = require("./map");
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 const loginForm = document.querySelector(".login-form");
@@ -587,6 +588,9 @@ const booking = document.getElementById("book-tour");
 const logOutBtn = document.querySelector(".nav__el--logout");
 const userForm = document.querySelector(".form-user-data");
 const passwordForm = document.querySelector(".form-user-password");
+const tourMapContainer = document.getElementById("map");
+const searchMapContainer = document.getElementById("searchMap");
+const mapContainer = document.getElementById("map-container");
 if (loginForm) loginForm.addEventListener("submit", (e)=>{
     e.preventDefault();
     const email = document.getElementById("email").value;
@@ -595,6 +599,46 @@ if (loginForm) loginForm.addEventListener("submit", (e)=>{
     console.log(password);
     (0, _loginMjs.login)(email, password);
 });
+if (mapContainer) {
+    let idCounter = 4;
+    const addButton = document.getElementById("addMap");
+    console.log(mapContainer.children);
+    addButton.addEventListener("click", ()=>{
+        const searchContainer = document.createElement("div");
+        console.log(searchContainer);
+        searchContainer.id = `searchMap${idCounter}`;
+        searchContainer.className = "form__label";
+        mapContainer.insertBefore(searchContainer, mapContainer.children[idCounter - 1]);
+        let coba = (0, _map.searchMap)(`searchMap${idCounter}`);
+        coba.on("results", (data)=>{
+            console.log("eaaaa");
+        });
+        idCounter++;
+    });
+    if (searchMapContainer) {
+        const searchResults = (0, _map.searchMap)("searchMap");
+        const searchResults2 = (0, _map.searchMap)("searchMap2");
+        const searchResults3 = (0, _map.searchMap)("searchMap3");
+        const searchPlaceholder = document.querySelector(".geocoder-control-input");
+        searchResults.on("results", (data)=>{
+            console.log(data);
+            searchPlaceholder.value = data.text;
+        });
+    // const inputSearch = document.querySelector('.geocoder-control-input');
+    // inputSearch.addEventListener('input', (e) => {
+    //   console.log(e.target.value);
+    //   L.esri.Geocoding.suggest()
+    //     .apikey(
+    //       'AAPK230f287ff34f4ae98c4e25156974beecQc2GJp-T-xco87SgkSAT10-Z3RZdpAXI1fzSJqkC9FMtCZWbKWMjCsZ-MlSDKG4i'
+    //     )
+    //     .text(e.target.value)
+    //     .nearby([45, -121], 5000)
+    //     .run(function (error, response) {
+    //       console.log(response);
+    //     });
+    // });
+    }
+}
 if (booking) booking.addEventListener("click", (e)=>{
     console.log(e.target.dataset.tourid);
     (0, _stripe.redirectToCheckout)(e.target.dataset.tourid);
@@ -622,11 +666,15 @@ if (passwordForm) passwordForm.addEventListener("submit", async (e)=>{
         passwordConfirm
     });
 });
+if (tourMapContainer) {
+    const locations = JSON.parse(mapContainer.dataset.locations);
+    (0, _map.displayMap)(locations);
+}
 logOutBtn.addEventListener("click", async (e)=>{
     await (0, _loginMjs.logout)();
 });
 
-},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","axios":"9qbW2","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU","./alerts":"jIq27"}],"fJhV0":[function(require,module,exports) {
+},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","axios":"9qbW2","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU","./alerts":"jIq27","./map":"8R6u6"}],"fJhV0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -5125,6 +5173,88 @@ const updateUserData = async (type, data)=>{
     }
 };
 
-},{"axios":"9qbW2","./alerts":"jIq27","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}]},["iMZYy","lT62u"], "lT62u", "parcelRequire11c7")
+},{"axios":"9qbW2","./alerts":"jIq27","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}],"8R6u6":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "displayMap", ()=>displayMap);
+parcelHelpers.export(exports, "searchMap", ()=>searchMap);
+const apiKey = "AAPK230f287ff34f4ae98c4e25156974beecQc2GJp-T-xco87SgkSAT10-Z3RZdpAXI1fzSJqkC9FMtCZWbKWMjCsZ-MlSDKG4i";
+const basemapEnum = "arcgis/streets";
+const displayMap = (locations)=>{
+    const map = L.map("map", {
+        scrollWheelZoom: false,
+        minZoom: 2
+    });
+    const searchControl = L.esri.Geocoding.geosearch({
+        position: "topright",
+        placeholder: "Enter an address or place e.g. 1 York St",
+        useMapBounds: false,
+        providers: [
+            L.esri.Geocoding.arcgisOnlineProvider({
+                apikey: apiKey,
+                nearby: {
+                    lat: -33.8688,
+                    lng: 151.2093
+                }
+            })
+        ]
+    }).addTo(map);
+//   const bounds = L.latLngBounds();
+//   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//     maxZoom: 19,
+//     attribution:
+//       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+//   }).addTo(map);
+//   locations.forEach((loc) => {
+//     console.log('tes');
+//     L.marker([loc.coordinates[1], loc.coordinates[0]]).addTo(map);
+//     bounds.extend([loc.coordinates[1], loc.coordinates[0]]);
+//   });
+//   map.fitBounds(bounds).zoomOut(2);
+};
+const searchMap = (id)=>{
+    console.log(id);
+    const map = L.map(id, {
+        center: [
+            0,
+            0
+        ],
+        zoom: 0,
+        zoomControl: false
+    });
+    const searchControl = L.esri.Geocoding.geosearch({
+        expanded: true,
+        collapseAfterResult: false,
+        position: "topright",
+        placeholder: "Enter an address or place e.g. 1 York St",
+        useMapBounds: false,
+        providers: [
+            L.esri.Geocoding.arcgisOnlineProvider({
+                apikey: apiKey,
+                nearby: {
+                    lat: -33.8688,
+                    lng: 151.2093
+                }
+            })
+        ],
+        zoomToResult: false
+    }).addTo(map);
+    // L.esri.Geocoding.suggest()
+    //   .apikey(
+    //     'AAPK230f287ff34f4ae98c4e25156974beecQc2GJp-T-xco87SgkSAT10-Z3RZdpAXI1fzSJqkC9FMtCZWbKWMjCsZ-MlSDKG4i'
+    //   )
+    //   .text('trea')
+    //   .nearby([45, -121], 5000)
+    //   .run(function (error, response) {
+    //     /* response syntax is documented here:
+    //   https://developers.arcgis.com/rest/geocode/api-reference/geocoding-suggest.htm#ESRI_SECTION1_FC3884A45AD24E62BD11C9888F1392DB
+    //   */
+    //     console.log(response);
+    //     console.log(error);
+    //   });
+    return searchControl;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}]},["iMZYy","lT62u"], "lT62u", "parcelRequire11c7")
 
 //# sourceMappingURL=index.js.map

@@ -85,7 +85,12 @@ body {
   height: 1px;
   background-color: #e0e0e0;
 }
-
+.line-bold {
+  margin: 6rem 0;
+  width: 100%;
+  height: 5px;
+  background-color: #55c57a;
+}
 .alert {
   position: fixed;
   top: 0;
@@ -231,8 +236,8 @@ body {
 }
 
 .btn--green {
-  background-color: #55c57a;
-  color: #fff;
+  background-color: #55c57a !important;
+  color: #fff !important;
 }
 .btn--green::after {
   background-color: #55c57a;
@@ -1076,7 +1081,27 @@ body {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 7rem;
 }
+.card-container-manage {
+  max-width: 120rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 3rem;
+}
 
+.container-manage {
+  width: 60%;
+  margin: 0px auto;
+  display: grid;
+  gap: 5rem;
+  margin-top: 5rem;
+  grid-template-columns: 1fr 2fr;
+}
+
+.container-photo{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+}
 .card {
   border-radius: 3px;
   overflow: hidden;
@@ -1094,6 +1119,82 @@ body {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+}
+
+.card-manage {
+  border-radius: 3px;
+  overflow: hidden;
+  -webkit-box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.leaflet-container{
+  width: 100%;
+  height: 50px;
+  display: block !important;
+  font-size: 1.6rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.75rem !important;
+  display: block;
+  font-family: inherit;
+  font-size: 1.5rem;
+  color: inherit;
+  border: none;
+  width: 100%;
+  background-color: #fff !important;
+  background-color: #f2f2f2 !important;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+
+.geocoder-control-suggestions{
+  width: 100% !important;
+  height: 500px !important;
+  overflow: visible !important ;
+  z-index: 100;
+}
+.geocoder-control{
+  margin: 0px !important;
+}
+.geocoder-control{
+  width: 100% !important;
+  height: 100%;
+  position: static !important;
+}
+
+.geocoder-control-input{
+  background-color: #fff !important;
+  background-color: #f2f2f2 !important;
+  height: 100% !important;
+}
+.leaflet-control-container{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.leaflet-top.leaflet-right {
+  width: 100%;
+  /* left: 0px; */
+  height: 100%;
 }
 .card__header {
   position: relative;
@@ -1188,6 +1289,13 @@ body {
   -ms-flex-item-align: center;
   align-self: center;
 }
+.card-manage .btn-small,
+.card-manage .btn {
+  grid-row: 1 / 3;
+  justify-self: end;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
 
 .error {
   position: absolute;
@@ -1266,6 +1374,7 @@ body {
   margin-bottom: 2.5rem;
 }
 
+
 .form__label {
   display: block;
   font-size: 1.6rem;
@@ -1289,6 +1398,11 @@ body {
   border-radius: 50%;
   margin-right: 2rem;
 }
+.form__tour-photo {
+  height: 7.5rem;
+  width: 7.5rem;
+  margin-right: 2rem;
+}
 
 .form__upload {
   width: 0.1px;
@@ -1303,6 +1417,7 @@ body {
   outline: 3px solid #55c57a;
   outline-offset: 3px;
 }
+
 
 .form__upload + label {
   color: #55c57a;

@@ -13,6 +13,12 @@ Router.get(
   '/manage-tours',
   authController.isLoggedIn,
   authController.restrictRolesTo('admin', 'lead-guide'),
+  viewController.manageTourSettings
+);
+Router.get(
+  '/manage-tours/:slug',
+  authController.isLoggedIn,
+  authController.restrictRolesTo('admin', 'lead-guide'),
   viewController.manageTour
 );
 // Router.route('/my-tours').get(

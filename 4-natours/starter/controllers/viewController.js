@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 exports.getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
   console.log(req.user);
-  res.render('overview', { tours, user: req.user });
+  res.render('overview', { tours: tours, user: req.user });
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -23,7 +23,13 @@ exports.tour = catchAsync(async (req, res, next) => {
 exports.getAccount = catchAsync(async (req, res, next) => {
   res.render('account', { user: req.user });
 });
-exports.manageTour = catchAsync(async (req, res, next) => {
+exports.manageTourSettings = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
-  res.render('overview', { tours, user: req.user });
+  res.render('manageTourSettings', { tours, user: req.user });
+});
+
+exports.manageTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findOne({ slug: req.params.slug });
+
+  res.render('manageTour', { tour, user: req.user });
 });

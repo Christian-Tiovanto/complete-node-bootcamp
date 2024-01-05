@@ -1,0 +1,112 @@
+extends base
+include _reviewCard
+
+block append head
+ link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin="")
+ script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin="")
+mixin overviewBox(label, text, icon)
+  .overview-box__detail
+    svg.overview-box__icon
+      use(xlink:href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+mixin inputImages(images)
+  .form__photo-upload 
+    img.form__tour-photo(src=`/img/tours/${images}`, alt='User photo')
+    input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+    label(for='photo') Choose new photo
+
+block content
+  .container-manage
+    .card-manage
+      .card__header
+        .card__picture
+          .card__picture-overlay &nbsp;
+          img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+        h3.heading-tertirary
+          span= tour.name
+
+      .card__details
+        h4.card__sub-heading= `${tour.difficulty} ${tour.duration}-day tour`
+        p.card__text= tour.summary
+        .card__data
+          svg.card__icon
+            use(xlink:href='/img/icons.svg#icon-map-pin')
+          span= tour.startLocation.description
+        .card__data
+          svg.card__icon
+            use(xlink:href='/img/icons.svg#icon-calendar')
+          span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+        .card__data
+          svg.card__icon
+            use(xlink:href='/img/icons.svg#icon-flag')
+          span= `${tour.locations.length} stops`
+        .card__data
+          svg.card__icon
+            use(xlink:href='/img/icons.svg#icon-user')
+          span= `${tour.maxGroupSize} people`
+
+      .card__footer
+        p
+          span.card__footer-value= `$${tour.price}`
+          | 
+          span.card__footer-text per person
+        p.card__ratings
+          span.card__footer-value= tour.ratingsAverage
+          | 
+          span.card__footer-text= `rating (${tour.ratingsQuantity})`
+        a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
+    .edit-tour.container
+      .row  
+        form.form.form-user-data
+          .form__group
+            label.form__label(for='name') Tour Name
+            input#name.form__input(type='text', value=`${tour.name}`, required, name='name')
+          .form__group.ma-bt-md
+            label.form__label(for='summary') Tour Summary
+            textarea#email.form__input(required, name='summary') #{tour.summary}
+          .form__group.ma-bt-md
+            label.form__label(for='desc') Tour Description
+            textarea#email.form__input(required, name='desc') #{tour.description}
+          .container 
+            .row
+              .col 
+                .form__group.ma-bt-md
+                  label.form__label(for='price') Price
+                  input.form__input(type="number",required, name='price') 
+              .col 
+                .form__group.ma-bt-md
+                  label.form__label(for='duration') Duration
+                  input.form__input(type="number",required, name='duration') 
+              .col 
+                .form__group.ma-bt-md
+                  label.form__label(for='maxgroupsize') Max Group Size
+                  input.form__input(type="number",required, name='maxgroupsize') 
+              .row 
+                label.form__label(for="difficulty") Difficulty
+                select.form__input(name="difficulty")
+                  option(value="easy") Easy
+                  option(value="medium") Medium
+                  option(value="difficult") Difficult
+          .line-bold &nbsp;
+          .form__group.text-center
+            h1.mb-3 Tour Images
+            .container-photo.text-start  
+              each images in tour.images 
+                +inputImages(images)
+          .form__group.mt-5.text-center.mb-5
+            h1.mb-3 Tour Cover 
+            +inputImages(tour.imageCover)
+          .line-bold &nbsp;
+          .container#map-container
+            #searchMap.form__label
+            #searchMap2.form__label
+            #searchMap3.form__label
+            button#addMap.w-100.btn.btn-secondary.rounded-0.h-50.fs-1.p-0.mb-3 +
+
+        button.btn.btn--small.btn--green Save settings
