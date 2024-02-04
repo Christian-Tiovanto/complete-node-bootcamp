@@ -10,8 +10,17 @@ const logOutBtn = document.querySelector('.nav__el--logout');
 const userForm = document.querySelector('.form-user-data');
 const passwordForm = document.querySelector('.form-user-password');
 const tourMapContainer = document.getElementById('map');
-const searchMapContainer = document.getElementById('searchMap');
+const manageTourForm = document.querySelector('.form-edit-tour');
 const mapContainer = document.getElementById('map-container');
+
+const handleSearchResults = (searchResults, coordinates, index) => {
+  searchResults.on('results', (data) => {
+    const searchPlaceholder = document.getElementsByClassName('geocoder-control-input')[index];
+    coordinates[index] = data.latlng;
+    searchPlaceholder.value = data.text;
+  });
+};
+
 if (loginForm) {
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -23,34 +32,58 @@ if (loginForm) {
   });
 }
 
-if (mapContainer) {
-  let idCounter = 4;
-  const addButton = document.getElementById('addMap');
-  console.log(mapContainer.children);
-  addButton.addEventListener('click', () => {
-    const searchContainer = document.createElement('div');
-    console.log(searchContainer);
-    searchContainer.id = `searchMap${idCounter}`;
-    searchContainer.className = 'form__label';
-    mapContainer.insertBefore(
-      searchContainer,
-      mapContainer.children[idCounter - 1]
-    );
-    let coba = searchMap(`searchMap${idCounter}`);
-    coba.on('results', (data) => {
-      console.log('eaaaa');
-    });
-    idCounter++;
+if (manageTourForm) {
+  const coordinates = [];
+  manageTourForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const tourName = document.getElementById('name');
+    const tourSummary = document.getElementById('summary');
+    const tourDesc = document.getElementById('desc');
+    const tourPrice = document.getElementById('price');
+    const tourDuration = document.getElementById('duration');
+    const tourGroupSize = document.getElementById('group-size');
+    const tourDifficulty = document.getElementById('difficulty');
   });
-  if (searchMapContainer) {
-    const searchResults = searchMap('searchMap');
-    const searchResults2 = searchMap('searchMap2');
-    const searchResults3 = searchMap('searchMap3');
-    const searchPlaceholder = document.querySelector('.geocoder-control-input');
-    searchResults.on('results', (data) => {
-      console.log(data);
-      searchPlaceholder.value = data.text;
+  if (mapContainer) {
+    let mapIdCounter = 4;
+    let mapZIndexCounter = 15;
+    // Loop through the mapContainer Children that has an id that start with searchMap, and initialize the leaflet map inside it
+    for (let i = 0; i < mapContainer.children.length; i++) {
+      if (mapContainer.children[i].id.startsWith('searchMap')) {
+        const searchResults = searchMap(`${mapContainer.children[i].id}`, `Location No ${i + 1}`);
+        handleSearchResults(searchResults, coordinates, i)
+      }
+    }
+    // Implementing add button, if a tour have more than 3 places
+    const addButton = document.getElementById('addMap');
+    addButton.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const searchContainer = document.createElement('div');
+      searchContainer.id = `searchMap${mapIdCounter}`;
+      searchContainer.className = 'form__label';
+      searchContainer.style.position = 'relative';
+      searchContainer.setAttribute('required', true);
+      searchContainer.style.zIndex = `${mapZIndexCounter}`;
+      mapContainer.insertBefore(
+        searchContainer,
+        mapContainer.children[mapIdCounter - 1]
+      );
+      let searchResults = searchMap(`searchMap${mapIdCounter}`, `Location no ${mapIdCounter}`);
+      handleSearchResults(searchResults, coordinates, mapIdCounter - 1)
+      mapIdCounter++;
+      mapZIndexCounter--;
     });
+    // if (searchMapContainer) {
+    //   const searchResults = searchMap('searchMap');
+    //   const searchResults2 = searchMap('searchMap2');
+    //   const searchResults3 = searchMap('searchMap3');
+    //   searchResults.on('results', (data) => {
+    //     console.log(data);
+    //     searchPlaceholder.value = data.text;
+    //   });
+
+    // Jika ingin menggunakan UI sendiri, maka gunakan SDK dibawah ini
     // const inputSearch = document.querySelector('.geocoder-control-input');
     // inputSearch.addEventListener('input', (e) => {
     //   console.log(e.target.value);
@@ -66,10 +99,11 @@ if (mapContainer) {
     //     });
     // });
   }
+  // }
+  // }
 }
 if (booking) {
   booking.addEventListener('click', (e) => {
-    console.log(e.target.dataset.tourid);
     redirectToCheckout(e.target.dataset.tourid);
   });
 }
@@ -80,7 +114,6 @@ if (userForm) {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const photo = document.getElementById('photo').files[0];
-    console.log(document.getElementById('photo'));
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);

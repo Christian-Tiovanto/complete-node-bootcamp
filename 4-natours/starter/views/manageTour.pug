@@ -15,11 +15,10 @@ mixin overviewBox(label, text, icon)
     span.overview-box__label= label
     span.overview-box__text= text
 
-mixin inputImages(images)
-  .form__photo-upload 
-    img.form__tour-photo(src=`/img/tours/${images}`, alt='User photo')
-    input.form__upload(type='file', accept='image/*', id='photo', name='photo')
-    label(for='photo') Choose new photo
+mixin inputImages(images,id)
+  img.form__tour-photo(src=`/img/tours/${images}`, alt='User photo')
+  input.form__upload(type='file', accept='image/*', name='photo')
+  label(for='photo') Choose new photo
 
 block content
   .container-manage
@@ -63,50 +62,50 @@ block content
         a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
     .edit-tour.container
       .row  
-        form.form.form-user-data
+        form.form.form-edit-tour
           .form__group
             label.form__label(for='name') Tour Name
             input#name.form__input(type='text', value=`${tour.name}`, required, name='name')
           .form__group.ma-bt-md
             label.form__label(for='summary') Tour Summary
-            textarea#email.form__input(required, name='summary') #{tour.summary}
+            textarea#summary.form__input(required, name='summary') #{tour.summary}
           .form__group.ma-bt-md
             label.form__label(for='desc') Tour Description
-            textarea#email.form__input(required, name='desc') #{tour.description}
+            textarea#desc.form__input(required, name='desc') #{tour.description}
           .container 
             .row
               .col 
                 .form__group.ma-bt-md
                   label.form__label(for='price') Price
-                  input.form__input(type="number",required, name='price') 
+                  input#price.form__input(type="number",required, name='price') 
               .col 
                 .form__group.ma-bt-md
                   label.form__label(for='duration') Duration
-                  input.form__input(type="number",required, name='duration') 
+                  input#duration.form__input(type="number",required, name='duration') 
               .col 
                 .form__group.ma-bt-md
                   label.form__label(for='maxgroupsize') Max Group Size
-                  input.form__input(type="number",required, name='maxgroupsize') 
+                  input#group-size.form__input(type="number",required, name='maxgroupsize') 
               .row 
                 label.form__label(for="difficulty") Difficulty
-                select.form__input(name="difficulty")
+                select#difficulty.form__input(name="difficulty")
                   option(value="easy") Easy
                   option(value="medium") Medium
                   option(value="difficult") Difficult
           .line-bold &nbsp;
           .form__group.text-center
             h1.mb-3 Tour Images
-            .container-photo.text-start  
+            .container-photo.text-start
               each images in tour.images 
-                +inputImages(images)
+                +inputImages(images,editImages)
           .form__group.mt-5.text-center.mb-5
             h1.mb-3 Tour Cover 
-            +inputImages(tour.imageCover)
+            +inputImages(tour.imageCover,editCover)
           .line-bold &nbsp;
-          .container#map-container
-            #searchMap.form__label
-            #searchMap2.form__label
-            #searchMap3.form__label
+          #map-container
+            #searchMap1.form__label(style="position: relative; z-index:18",required)
+            #searchMap2.form__label(style="position:relative; z-index:17",required)
+            #searchMap3.form__label(style="position:relative; z-index:16",required)
             button#addMap.w-100.btn.btn-secondary.rounded-0.h-50.fs-1.p-0.mb-3 +
 
-        button.btn.btn--small.btn--green Save settings
+          button.btn.btn--small.btn--green.w-100(type="submit") Save settings

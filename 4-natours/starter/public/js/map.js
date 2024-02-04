@@ -36,7 +36,7 @@ export const displayMap = (locations) => {
   //   map.fitBounds(bounds).zoomOut(2);
 };
 
-export const searchMap = (id) => {
+export const searchMap = (id, placeholderText) => {
   console.log(id);
   const map = L.map(id, {
     center: [0, 0],
@@ -47,7 +47,7 @@ export const searchMap = (id) => {
     expanded: true,
     collapseAfterResult: false,
     position: 'topright',
-    placeholder: 'Enter an address or place e.g. 1 York St',
+    placeholder: placeholderText,
     useMapBounds: false,
     providers: [
       L.esri.Geocoding.arcgisOnlineProvider({
