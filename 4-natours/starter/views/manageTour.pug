@@ -18,7 +18,7 @@ mixin overviewBox(label, text, icon)
 mixin inputImages(images,className,id)
   .form__group.form__photo-upload
     img.form__tour-photo(src=`/img/tours/${images}`, alt='Tour photo',class=`${className}Src`)
-    input.form__upload(type='file', accept='image/*', name='photo',class=`${className}`,id=`${id}`)
+    input.form__upload(type='file', accept='image/*', name='photo',class=`${className}`,id=`${id}`,required)
     label(for=`${id}`) Choose new photo
 
 block content
@@ -63,7 +63,7 @@ block content
         a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
     .edit-tour.container
       .row  
-        form.form.form-edit-tour
+        form.form.form-edit-tour(data-tourId=`${tour._id}`)
           .form__group
             label.form__label(for='name') Tour Name
             input#name.form__input(type='text', value=`${tour.name}`, required, name='name')

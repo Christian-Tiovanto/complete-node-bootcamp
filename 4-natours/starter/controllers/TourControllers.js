@@ -3,6 +3,8 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const APIFeatures = require('./../utils/apiFeatures');
 const sharp = require('sharp');
+const path = require("path")
+const fs = require('fs')
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
   if (!tour) return next(new AppError('There is no tour with that id', 404));
@@ -36,8 +38,6 @@ exports.postTour = catchAsync(async (req, res, next) => {
 });
 
 exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
-  console.log("aeaaaaabadsfasdf")
-  console.log(req.body)
   if (!req.files.imageCover && !req.files.images) return next();
   if (req.files.imageCover) {
     req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -47,27 +47,16 @@ exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/tours/${req.body.imageCover}`);
   }
-  console.log("aeaaaaabadsfasdf")
-  console.log("shibal sekiya")
-  console.log(req.files.imageCover)
-  console.log("aeaaaaa")
-  console.log(req.files.images)
   if (req.files.images.length < 3) next(new AppError('Please upload 3 images foto', 400));
   req.body.images = [];
   await Promise.all(
-    req.files.images.map(async (file) => {
-      let image = file.originalname.replace(".noImage", '');
-
-      if (!file.originalname.includes("noImage")) {
-        image = `tour-${req.params.id}-${Date.now()}.jpeg`;
-        await sharp(file.buffer)
-          .resize(2000, 1333)
-          .toFormat('jpeg')
-          .jpeg({ quality: 90 })
-          .toFile(`public/img/tours/${image}`);
-        console.log("eaaa")
-      }
-
+    req.files.images.map(async (file, index) => {
+      image = `tour-${req.params.id}-${Date.now()}-${index}.jpeg`;
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${image}`);
       req.body.images.push(image);
     })
   );
@@ -75,11 +64,25 @@ exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.updateTour = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const data = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
   if (!data) return next(new AppError('There is no tour with that id', 404));
+  // The directory where your images are stored
+  const directory = path.join(__dirname, '..', 'public', 'img', 'tours')
+  // Read File Directory and delete the previous Image for the same Tour
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+    files.forEach(file => {
+      if (file.includes(req.params.id)) {
+        if (file.split("-")[2].replace(".jpeg", '') < Date.now() - 10000)
+          fs.unlink(path.join(directory, file), err => {
+            if (err) throw err;
+            console.log(`Deleted file: ${file}`);
+          });
+      }
+    });
+  })
   res.status(200).json({
     status: 'success',
     data,

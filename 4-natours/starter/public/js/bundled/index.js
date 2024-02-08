@@ -578,6 +578,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 var _loginMjs = require("./login.mjs");
 var _stripe = require("./stripe");
 var _updateSettings = require("./updateSettings.");
+var _alerts = require("./alerts");
 var _map = require("./map");
 const loginForm = document.querySelector(".login-form");
 const booking = document.getElementById("book-tour");
@@ -613,23 +614,15 @@ if (manageTourForm) {
         const tourDuration = document.getElementById("duration").value;
         const tourGroupSize = document.getElementById("group-size").value;
         const tourDifficulty = document.getElementById("difficulty").value;
-        let imagesSrc = Array.from(document.querySelectorAll(".editImagesSrc"), (images)=>{
-            return images.src;
-        });
         let images = Array.from(document.querySelectorAll(".editImages"), (images, index)=>{
             if (images.files[0]) return images.files[0];
-            const image = new File([
-                `${imagesSrc[index]}`
-            ], `${imagesSrc[index]}.noImage`, {
-                type: "image/*"
-            });
-            return image;
         });
         let imageCover = document.getElementById("editCover").files[0];
         const formData = new FormData();
         images.forEach((images)=>{
             formData.append("images", images);
         });
+        formData.append("name", tourName);
         formData.append("imageCover", imageCover);
         formData.append("summary", tourSummary);
         formData.append("description", tourDesc);
@@ -637,7 +630,8 @@ if (manageTourForm) {
         formData.append("duration", tourDuration);
         formData.append("maxGroupSize", tourGroupSize);
         formData.append("difficulty", tourDifficulty);
-        (0, _map.updateMapSettings)(formData, "5c88fa8cf4afda39709c2955");
+        console.log(e.target.dataset.tourid);
+        (0, _map.updateMapSettings)(formData, e.target.dataset.tourid);
     });
     if (mapContainer) {
         let mapIdCounter = 4;
@@ -722,7 +716,7 @@ logOutBtn.addEventListener("click", async (e)=>{
     await (0, _loginMjs.logout)();
 });
 
-},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","./map":"8R6u6"}],"fJhV0":[function(require,module,exports) {
+},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","./map":"8R6u6","./alerts":"jIq27"}],"fJhV0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
