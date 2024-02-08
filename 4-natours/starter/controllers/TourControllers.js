@@ -36,6 +36,8 @@ exports.postTour = catchAsync(async (req, res, next) => {
 });
 
 exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
+  console.log("aeaaaaabadsfasdf")
+  console.log(req.body)
   if (!req.files.imageCover && !req.files.images) return next();
   if (req.files.imageCover) {
     req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -45,17 +47,26 @@ exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/tours/${req.body.imageCover}`);
   }
-  if (req.files.images.length < 3)
-    next(new AppError('Please upload 3 images foto', 400));
+  console.log("aeaaaaabadsfasdf")
+  console.log("shibal sekiya")
+  console.log(req.files.imageCover)
+  console.log("aeaaaaa")
+  console.log(req.files.images)
+  if (req.files.images.length < 3) next(new AppError('Please upload 3 images foto', 400));
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file) => {
-      const image = `tour-${req.params.id}-${Date.now()}.jpeg`;
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/tours/${image}`);
+      let image = file.originalname.replace(".noImage", '');
+
+      if (!file.originalname.includes("noImage")) {
+        image = `tour-${req.params.id}-${Date.now()}.jpeg`;
+        await sharp(file.buffer)
+          .resize(2000, 1333)
+          .toFormat('jpeg')
+          .jpeg({ quality: 90 })
+          .toFile(`public/img/tours/${image}`);
+        console.log("eaaa")
+      }
 
       req.body.images.push(image);
     })

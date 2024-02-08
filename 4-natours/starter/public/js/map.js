@@ -1,3 +1,5 @@
+import axios from "axios";
+import { showAlert } from "./alerts";
 const apiKey =
   'AAPK230f287ff34f4ae98c4e25156974beecQc2GJp-T-xco87SgkSAT10-Z3RZdpAXI1fzSJqkC9FMtCZWbKWMjCsZ-MlSDKG4i';
 
@@ -75,3 +77,23 @@ export const searchMap = (id, placeholderText) => {
   //   });
   return searchControl;
 };
+
+
+export const updateMapSettings = async (data, id) => {
+  try {
+    const res = await axios({
+      method: "PATCH",
+      data,
+      url: `http://127.0.0.1:3000/api/v1/tours/${id}`
+    })
+    if (res.data.status == 'success') {
+      showAlert('success', 'data changed');
+      window.setTimeout(() => {
+        location.assign("/")
+      }, 1500);
+    }
+  } catch (err) {
+    console.log(err);
+    showAlert('error', err.data.message)
+  }
+}

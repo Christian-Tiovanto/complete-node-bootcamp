@@ -1,9 +1,7 @@
-import { showAlert } from './alerts';
 import { login, logout } from './login.mjs';
 import { redirectToCheckout } from './stripe';
 import { updateUserData } from './updateSettings.';
-import { displayMap, searchMap } from './map';
-import axios from 'axios';
+import { displayMap, searchMap, updateMapSettings } from './map';
 const loginForm = document.querySelector('.login-form');
 const booking = document.getElementById('book-tour');
 const logOutBtn = document.querySelector('.nav__el--logout');
@@ -36,13 +34,33 @@ if (manageTourForm) {
   const coordinates = [];
   manageTourForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const tourName = document.getElementById('name');
-    const tourSummary = document.getElementById('summary');
-    const tourDesc = document.getElementById('desc');
-    const tourPrice = document.getElementById('price');
-    const tourDuration = document.getElementById('duration');
-    const tourGroupSize = document.getElementById('group-size');
-    const tourDifficulty = document.getElementById('difficulty');
+    const tourName = document.getElementById('name').value;
+    const tourSummary = document.getElementById('summary').value;
+    const tourDesc = document.getElementById('desc').value;
+    const tourPrice = document.getElementById('price').value;
+    const tourDuration = document.getElementById('duration').value;
+    const tourGroupSize = document.getElementById('group-size').value;
+    const tourDifficulty = document.getElementById('difficulty').value;
+    let imagesSrc = Array.from(document.querySelectorAll('.editImagesSrc'), (images) => {
+      return images.src
+    });
+
+    let images = Array.from(document.querySelectorAll('.editImages'), (images, index) => {
+      if (images.files[0]) return images.files[0]
+      const image = new File([`${imagesSrc[index]}`], `${imagesSrc[index]}.noImage`, { type: "image/*" })
+      return image
+    });
+    let imageCover = document.getElementById('editCover').files[0]
+    const formData = new FormData();
+    images.forEach((images) => { formData.append('images', images) })
+    formData.append('imageCover', imageCover)
+    formData.append('summary', tourSummary)
+    formData.append('description', tourDesc)
+    formData.append('price', tourPrice)
+    formData.append('duration', tourDuration)
+    formData.append('maxGroupSize', tourGroupSize)
+    formData.append('difficulty', tourDifficulty)
+    updateMapSettings(formData, '5c88fa8cf4afda39709c2955')
   });
   if (mapContainer) {
     let mapIdCounter = 4;

@@ -575,14 +575,10 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"lT62u":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-var _alerts = require("./alerts");
 var _loginMjs = require("./login.mjs");
 var _stripe = require("./stripe");
 var _updateSettings = require("./updateSettings.");
 var _map = require("./map");
-var _axios = require("axios");
-var _axiosDefault = parcelHelpers.interopDefault(_axios);
 const loginForm = document.querySelector(".login-form");
 const booking = document.getElementById("book-tour");
 const logOutBtn = document.querySelector(".nav__el--logout");
@@ -610,13 +606,38 @@ if (manageTourForm) {
     const coordinates = [];
     manageTourForm.addEventListener("submit", (e)=>{
         e.preventDefault();
-        const tourName = document.getElementById("name");
-        const tourSummary = document.getElementById("summary");
-        const tourDesc = document.getElementById("desc");
-        const tourPrice = document.getElementById("price");
-        const tourDuration = document.getElementById("duration");
-        const tourGroupSize = document.getElementById("group-size");
-        const tourDifficulty = document.getElementById("difficulty");
+        const tourName = document.getElementById("name").value;
+        const tourSummary = document.getElementById("summary").value;
+        const tourDesc = document.getElementById("desc").value;
+        const tourPrice = document.getElementById("price").value;
+        const tourDuration = document.getElementById("duration").value;
+        const tourGroupSize = document.getElementById("group-size").value;
+        const tourDifficulty = document.getElementById("difficulty").value;
+        let imagesSrc = Array.from(document.querySelectorAll(".editImagesSrc"), (images)=>{
+            return images.src;
+        });
+        let images = Array.from(document.querySelectorAll(".editImages"), (images, index)=>{
+            if (images.files[0]) return images.files[0];
+            const image = new File([
+                `${imagesSrc[index]}`
+            ], `${imagesSrc[index]}.noImage`, {
+                type: "image/*"
+            });
+            return image;
+        });
+        let imageCover = document.getElementById("editCover").files[0];
+        const formData = new FormData();
+        images.forEach((images)=>{
+            formData.append("images", images);
+        });
+        formData.append("imageCover", imageCover);
+        formData.append("summary", tourSummary);
+        formData.append("description", tourDesc);
+        formData.append("price", tourPrice);
+        formData.append("duration", tourDuration);
+        formData.append("maxGroupSize", tourGroupSize);
+        formData.append("difficulty", tourDifficulty);
+        (0, _map.updateMapSettings)(formData, "5c88fa8cf4afda39709c2955");
     });
     if (mapContainer) {
         let mapIdCounter = 4;
@@ -701,7 +722,7 @@ logOutBtn.addEventListener("click", async (e)=>{
     await (0, _loginMjs.logout)();
 });
 
-},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","axios":"9qbW2","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU","./alerts":"jIq27","./map":"8R6u6"}],"fJhV0":[function(require,module,exports) {
+},{"./login.mjs":"fJhV0","./stripe":"2ulb2","./updateSettings.":"eMIfp","./map":"8R6u6"}],"fJhV0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -5205,6 +5226,10 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "displayMap", ()=>displayMap);
 parcelHelpers.export(exports, "searchMap", ()=>searchMap);
+parcelHelpers.export(exports, "updateMapSettings", ()=>updateMapSettings);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _alerts = require("./alerts");
 const apiKey = "AAPK230f287ff34f4ae98c4e25156974beecQc2GJp-T-xco87SgkSAT10-Z3RZdpAXI1fzSJqkC9FMtCZWbKWMjCsZ-MlSDKG4i";
 const basemapEnum = "arcgis/streets";
 const displayMap = (locations)=>{
@@ -5281,7 +5306,25 @@ const searchMap = (id, placeholderText)=>{
     //   });
     return searchControl;
 };
+const updateMapSettings = async (data, id)=>{
+    try {
+        const res = await (0, _axiosDefault.default)({
+            method: "PATCH",
+            data,
+            url: `http://127.0.0.1:3000/api/v1/tours/${id}`
+        });
+        if (res.data.status == "success") {
+            (0, _alerts.showAlert)("success", "data changed");
+            window.setTimeout(()=>{
+                location.assign("/");
+            }, 1500);
+        }
+    } catch (err) {
+        console.log(err);
+        (0, _alerts.showAlert)("error", err.data.message);
+    }
+};
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}]},["iMZYy","lT62u"], "lT62u", "parcelRequire11c7")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"5oERU","axios":"9qbW2","./alerts":"jIq27"}]},["iMZYy","lT62u"], "lT62u", "parcelRequire11c7")
 
 //# sourceMappingURL=index.js.map
