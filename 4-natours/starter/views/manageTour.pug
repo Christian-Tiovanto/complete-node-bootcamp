@@ -63,7 +63,7 @@ block content
         a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
     .edit-tour.container
       .row  
-        form.form.form-edit-tour
+        form.form.form-edit-tour(data-tourId=`${tour._id}`)
           .form__group
             label.form__label(for='name') Tour Name
             input#name.form__input(type='text', value=`${tour.name}`, required, name='name')
@@ -105,8 +105,8 @@ block content
           .line-bold &nbsp;
           #map-container
             #searchMap1.form__label(style="position: relative; z-index:18",required)
-            #searchMap2.form__label(style="position:relative; z-index:17",required)
-            #searchMap3.form__label(style="position:relative; z-index:16",required)
+            //- #searchMap2.form__label(style="position:relative; z-index:17",required)
+            //- #searchMap3.form__label(style="position:relative; z-index:16",required)
             button#addMap.w-100.btn.btn-secondary.rounded-0.h-50.fs-1.p-0.mb-3 +
 
           button.btn.btn--small.btn--green.w-100(type="submit") Save settings

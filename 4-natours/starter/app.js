@@ -17,9 +17,19 @@ app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARES
 // Serving static files
+app.use((req, res, next) => {
+  console.log("aeasdfasd tes json 11234")
+  console.log(req.body)
+  next()
+})
 app.use(express.static(path.join(__dirname, 'public')));
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+app.use((req, res, next) => {
+  console.log("aeasdfasd tes json")
+  console.log(req.body)
+  next()
+})
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
