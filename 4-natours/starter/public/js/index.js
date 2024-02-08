@@ -15,7 +15,8 @@ const mapContainer = document.getElementById('map-container');
 const handleSearchResults = (searchResults, coordinates, index) => {
   searchResults.on('results', (data) => {
     const searchPlaceholder = document.getElementsByClassName('geocoder-control-input')[index];
-    coordinates[index] = data.latlng;
+    console.log(data)
+    coordinates[index] = { coordinates: [data.latlng.lng, data.latlng.lat] };
     searchPlaceholder.value = data.text;
   });
 };
@@ -25,13 +26,13 @@ if (loginForm) {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    console.log(email);
-    console.log(password);
     login(email, password);
   });
 }
 
 if (manageTourForm) {
+  let mapIdCounter = 1;
+  let mapZIndexCounter = 15;
   const coordinates = [];
   manageTourForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -56,12 +57,11 @@ if (manageTourForm) {
     formData.append('duration', tourDuration)
     formData.append('maxGroupSize', tourGroupSize)
     formData.append('difficulty', tourDifficulty)
-    console.log(e.target.dataset.tourid)
+    if (coordinates.length != mapIdCounter) return showAlert("error", "Please fill all the location")
+    formData.append('locations', JSON.stringify(coordinates))
     updateMapSettings(formData, e.target.dataset.tourid)
   });
   if (mapContainer) {
-    let mapIdCounter = 4;
-    let mapZIndexCounter = 15;
     // Loop through the mapContainer Children that has an id that start with searchMap, and initialize the leaflet map inside it
     for (let i = 0; i < mapContainer.children.length; i++) {
       if (mapContainer.children[i].id.startsWith('searchMap')) {

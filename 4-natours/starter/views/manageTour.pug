@@ -18,7 +18,7 @@ mixin overviewBox(label, text, icon)
 mixin inputImages(images,className,id)
   .form__group.form__photo-upload
     img.form__tour-photo(src=`/img/tours/${images}`, alt='Tour photo',class=`${className}Src`)
-    input.form__upload(type='file', accept='image/*', name='photo',class=`${className}`,id=`${id}`,required)
+    input.form__upload(type='file', accept='image/*', name='photo',class=`${className}`,id=`${id}`)
     label(for=`${id}`) Choose new photo
 
 block content
@@ -105,8 +105,8 @@ block content
           .line-bold &nbsp;
           #map-container
             #searchMap1.form__label(style="position: relative; z-index:18",required)
-            #searchMap2.form__label(style="position:relative; z-index:17",required)
-            #searchMap3.form__label(style="position:relative; z-index:16",required)
+            //- #searchMap2.form__label(style="position:relative; z-index:17",required)
+            //- #searchMap3.form__label(style="position:relative; z-index:16",required)
             button#addMap.w-100.btn.btn-secondary.rounded-0.h-50.fs-1.p-0.mb-3 +
 
           button.btn.btn--small.btn--green.w-100(type="submit") Save settings
