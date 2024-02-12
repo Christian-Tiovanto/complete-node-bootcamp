@@ -16,8 +16,8 @@ exports.tour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findOne({ slug: req.params.slug })
     .populate('reviews')
     .populate('guides');
-
-  res.render('tour', { tour, user: req.user });
+  console.log(tour.locations)
+  res.render('tour', { tour, user: req.user, isBooked: "asdfasdf" });
 });
 
 exports.getAccount = catchAsync(async (req, res, next) => {

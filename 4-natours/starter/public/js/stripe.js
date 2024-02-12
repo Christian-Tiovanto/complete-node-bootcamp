@@ -1,5 +1,5 @@
 import { showAlert } from './alerts';
-
+import axios from 'axios';
 export const redirectToCheckout = async (tourId) => {
   try {
     const res = await axios({
@@ -12,6 +12,7 @@ export const redirectToCheckout = async (tourId) => {
       }, 1500);
     }
   } catch (err) {
+    console.log(err)
     showAlert('error', err.response.data.message);
   }
 };

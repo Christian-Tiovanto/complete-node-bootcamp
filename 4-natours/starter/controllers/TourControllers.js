@@ -64,9 +64,7 @@ exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.updateTour = catchAsync(async (req, res, next) => {
-  console.log(req.body)
   req.body.locations = JSON.parse(req.body.locations)
-  // console.log(req.body.locations)
   const data = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });

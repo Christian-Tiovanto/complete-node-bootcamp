@@ -11,6 +11,31 @@ const passwordForm = document.querySelector('.form-user-password');
 const tourMapContainer = document.getElementById('map');
 const manageTourForm = document.querySelector('.form-edit-tour');
 const mapContainer = document.getElementById('map-container');
+const reviewBtn = document.querySelector('.btn--review');
+const reviewSave = document.querySelector('.review-save');
+const closeReview = document.querySelector('.close');
+
+if (reviewBtn) {
+  reviewBtn.addEventListener('click', () => {
+    document.querySelector('.bg-modal').style.display = "flex";
+  });
+}
+
+if (closeReview) {
+  closeReview.addEventListener("click", () => {
+    document.querySelector('.bg-modal').style.display = "none";
+  });
+}
+
+if (reviewSave) {
+  reviewSave.addEventListener("click", async e => {
+    const review = document.getElementById('review').value;
+    const rating = document.getElementById('ratings').value;
+    const { tourId } = e.target.dataset;
+    await createReview(tourId, review, rating);
+    document.querySelector('.bg-modal').style.display = "none";
+  });
+}
 
 const handleSearchResults = (searchResults, coordinates, index) => {
   searchResults.on('results', (data) => {
@@ -119,6 +144,7 @@ if (manageTourForm) {
 }
 if (booking) {
   booking.addEventListener('click', (e) => {
+    console.log(e.target.dataset)
     redirectToCheckout(e.target.dataset.tourid);
   });
 }
@@ -154,7 +180,8 @@ if (passwordForm) {
 }
 
 if (tourMapContainer) {
-  const locations = JSON.parse(mapContainer.dataset.locations);
+  const locations = JSON.parse(tourMapContainer.dataset.locations);
+  console.log("TeSSS")
   displayMap(locations);
 }
 logOutBtn.addEventListener('click', async (e) => {

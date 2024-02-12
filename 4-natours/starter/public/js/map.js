@@ -6,36 +6,23 @@ const apiKey =
 const basemapEnum = 'arcgis/streets';
 
 export const displayMap = (locations) => {
+  console.log(L)
   const map = L.map('map', {
     scrollWheelZoom: false,
     minZoom: 2,
   });
-  const searchControl = L.esri.Geocoding.geosearch({
-    position: 'topright',
-    placeholder: 'Enter an address or place e.g. 1 York St',
-    useMapBounds: false,
-    providers: [
-      L.esri.Geocoding.arcgisOnlineProvider({
-        apikey: apiKey,
-        nearby: {
-          lat: -33.8688,
-          lng: 151.2093,
-        },
-      }),
-    ],
+  const bounds = L.latLngBounds();
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
-  //   const bounds = L.latLngBounds();
-  //   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  //     maxZoom: 19,
-  //     attribution:
-  //       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  //   }).addTo(map);
-  //   locations.forEach((loc) => {
-  //     console.log('tes');
-  //     L.marker([loc.coordinates[1], loc.coordinates[0]]).addTo(map);
-  //     bounds.extend([loc.coordinates[1], loc.coordinates[0]]);
-  //   });
-  //   map.fitBounds(bounds).zoomOut(2);
+  locations.forEach((loc) => {
+    console.log('tes');
+    L.marker([loc.coordinates[1], loc.coordinates[0]]).addTo(map);
+    bounds.extend([loc.coordinates[1], loc.coordinates[0]]);
+  });
+  map.fitBounds(bounds).zoomOut(2);
 };
 
 export const searchMap = (id, placeholderText) => {

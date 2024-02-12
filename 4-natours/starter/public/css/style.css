@@ -603,7 +603,12 @@ body {
     0 100%
   );
 }
+#review-tour{
+  background-color: #28b487;
+  width: 50%;
+  margin: auto !important;
 
+}
 .reviews {
   padding: 5rem 0;
   display: grid;
@@ -1443,4 +1448,48 @@ body {
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+
+/*popup review form*/
+.bg-modal {
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+ 
+.modal-contents {
+  height: 320px;
+  width: 500px;
+  background-color: white;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  border-radius: 4px;
+}
+ 
+input {
+  margin: 15px auto;
+  display: block;
+  width: 50%;
+  padding: 8px;
+  border: 1px solid gray;
+}
+ 
+.close {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  font-size: 42px;
+  color: #333;
+  transform: rotate(45deg);
+  cursor: pointer;
+  &:hover {
+    color: #666;
+  }
 }

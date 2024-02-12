@@ -146,7 +146,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetURL = `http://127.0.0.1:3000/api/v1/users/resetpassword/${token}`;
   const message = `forgot your password? submit a patch request with your new password and confirm password to:${resetURL}.\nif you didnt 
   forget your password. Please ignore this`;
-
   try {
     await sendMail({
       message,
