@@ -35,8 +35,9 @@ app.use(helmet(
     {
       directives:
       {
-        'script-src': ["'self'", 'unpkg.com'],
-        'img-src': ["'self'", 'tile.openstreetmap.org', 'unpkg.com', 'data']
+        'script-src': ["'self'", 'unpkg.com', 'cdnjs.cloudflare.com'],
+        'img-src': ["'self'", 'tile.openstreetmap.org', 'unpkg.com', 'data:'],
+        'connect-src': ["'self'", 'ws://127.0.0.1:1234']
       },
     }
   },
